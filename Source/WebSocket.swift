@@ -445,11 +445,11 @@ open class WebSocket : NSObject, StreamDelegate {
         outputStream?.delegate = nil
         inputStream?.delegate = nil
         if let stream = inputStream {
-            CFReadStreamSetDispatchQueue(stream, nil)
+//            CFReadStreamSetDispatchQueue(stream, nil)
             stream.close()
         }
         if let stream = outputStream {
-            CFWriteStreamSetDispatchQueue(stream, nil)
+//            CFWriteStreamSetDispatchQueue(stream, nil)
             stream.close()
         }
         outputStream = nil
