@@ -145,15 +145,15 @@ open class WebSocket : NSObject, StreamDelegate {
     private var outputStream: OutputStream?
     private var connected = false
     private var isConnecting = false
-    private var writeQueue = OperationQueue()
-    private var readStack = [WSResponse]()
-    private var inputQueue = [Data]()
+    private var writeQueue: OperationQueue
+    private var readStack: [WSResponse]
+    private var inputQueue: [Data]
     private var fragBuffer: Data?
     private var certValidated = false
     private var didDisconnect = false
     private var readyToWrite = false
-    private let mutex = NSLock()
-    private let notificationCenter = NotificationCenter.default
+    private let mutex: NSLock
+    private let notificationCenter: NotificationCenter
     private var canDispatch: Bool {
         mutex.lock()
         let canWork = readyToWrite
@@ -165,8 +165,13 @@ open class WebSocket : NSObject, StreamDelegate {
     
     /// Used for setting protocols.
     public init(url: URL, protocols: [String]? = nil) {
+        mutex = NSLock()
         self.url = url
-        self.origin = url.absoluteString
+        notificationCenter = NotificationCenter.default
+        inputQueue = [Data]()
+        writeQueue = OperationQueue()
+        readStack = [WSResponse]()
+        origin = url.absoluteString
         if let hostUrl = URL (string: "/", relativeTo: url) {
             var origin = hostUrl.absoluteString
             origin.remove(at: origin.index(before: origin.endIndex))
@@ -174,6 +179,7 @@ open class WebSocket : NSObject, StreamDelegate {
         }
         writeQueue.maxConcurrentOperationCount = 1
         optionalProtocols = protocols
+        super.init()
     }
     
     // Used for specifically setting the QOS for the write queue.
