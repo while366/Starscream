@@ -97,7 +97,7 @@ open class WebSocket : NSObject, StreamDelegate {
     let PayloadLenMask: UInt8   = 0x7F
     let MaxFrameSize: Int       = 32
     let httpSwitchProtocolCode  = 101
-    let supportedSSLSchemes     = ["wss", "https"]
+    let supportedSSLSchemes: [String]
 
     class WSResponse {
         var isFin = false
@@ -125,13 +125,13 @@ open class WebSocket : NSObject, StreamDelegate {
     public var onData: ((Data) -> Void)?
     public var onPong: ((Data?) -> Void)?
 
-    public var headers = [String: String]()
-    public var voipEnabled = false
-    public var disableSSLCertValidation = false
+    public var headers: [String: String]
+    public var voipEnabled: Bool
+    public var disableSSLCertValidation: Bool
     public var security: SSLTrustValidator?
     public var enabledSSLCipherSuites: [SSLCipherSuite]?
     public var origin: String?
-    public var timeout = 5
+    public var timeout:Int
     public var isConnected: Bool {
         return connected
     }
@@ -165,6 +165,11 @@ open class WebSocket : NSObject, StreamDelegate {
     
     /// Used for setting protocols.
     public init(url: URL, protocols: [String]? = nil) {
+        supportedSSLSchemes = ["wss", "https"]
+        disableSSLCertValidation = false
+        voipEnabled = false
+        timeout = 5
+        headers = [String: String]()
         mutex = NSLock()
         self.url = url
         notificationCenter = NotificationCenter.default
